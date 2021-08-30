@@ -1,7 +1,7 @@
 <template>
   <el-card class="box-card" shadow="never">
     <div slot="header">
-      <span>🥳 每日一句</span>
+      <span>🥳 健康生活Tip</span>
     </div>
     <div>
       <div class="has-text-left block">

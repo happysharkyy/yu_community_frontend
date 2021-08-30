@@ -1,6 +1,8 @@
 <template>
   <div>
     <div class="box">🔔 {{ billboard.content }}</div>
+     <!--面板-->
+    <Panel />
     <div class="columns">
       <div class="column is-three-quarters">
         <TopicList></TopicList>
@@ -13,13 +15,15 @@
 </template>
 
 <script>
+import Panel from '@/views/home/Panel'
 import { getBillboard } from "@/api/billboard";
 import CardBar from "@/views/card/CardBar"
 import PostList from '@/views/post/Index'
 
+
 export default {
   name: "Home",
-  components: {CardBar, TopicList: PostList},
+  components: {CardBar, TopicList: PostList,Panel},
   data() {
     return {
       billboard: {

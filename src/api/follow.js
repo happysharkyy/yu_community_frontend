@@ -23,3 +23,10 @@ export function hasFollow(topicUserId) {
     method: 'get'
   }))
 }
+export function findPageOwn(data) {
+  return request({
+      url: '/follow/findPageOwn',
+      method: 'post',
+      data: data
+  })
+}

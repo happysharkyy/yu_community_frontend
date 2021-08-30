@@ -52,8 +52,8 @@ export default {
       redirect: undefined,
       loading: false,
       ruleForm: {
-        name: "",
-        pass: "",
+        name: "admin",
+        pass: "123456",
         rememberMe: true,
       },
       rules: {

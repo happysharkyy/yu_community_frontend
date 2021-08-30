@@ -9,7 +9,7 @@
         <article v-for="(item, index) in list" :key="index" class="media">
           <div class="media-left">
             <figure class="image is-48x48">
-              <img :src="`https://cn.gravatar.com/avatar/${item.userId}?s=164&d=monsterid`"> 
+              <img :src="url+item.avatar"  style="border-radius: 5px;width: 46px; height: 46px"> 
             </figure>
           </div>
           <div class="media-content">
@@ -17,7 +17,7 @@
               <p class="ellipsis is-ellipsis-1">
                 <el-tooltip class="item" effect="dark" :content="item.title" placement="top">
                   <router-link :to="{name:'post-detail',params:{id:item.id}}">
-                    <span class="is-size-6">{{ item.title }}</span>
+                    <span class="is-size-6">  <a v-html="item.title"></a></span>
                   </router-link>
                 </el-tooltip>
               </p>
@@ -26,7 +26,7 @@
               <div class="level-left">
                 <div class="level-left">
                   <router-link class="level-item" :to="{ path: `/member/${item.username}/home` }">
-                    {{ item.alias }}
+                    <a v-html="item.username"></a>
                   </router-link>
 
                   <span class="mr-1">
@@ -39,7 +39,7 @@
                     class="tag is-hidden-mobile is-success is-light mr-1"
                   >
                     <router-link :to="{ name: 'tag', params: { name: tag.name } }">
-                      {{ "#" + tag.name }}
+                      <a v-html="'#'+tag.name"></a>
                     </router-link>
                   </span>
 
@@ -51,7 +51,6 @@
           <div class="media-right" />
         </article>
       </div>
-
       <!--分页-->
       <pagination
         v-show="query.total > 0"
@@ -74,6 +73,7 @@ export default {
   data() {
     return {
       list: [],
+      url:'',
       query: {
         keyword: this.$route.query.key,
         pageNum: 1,
@@ -83,12 +83,14 @@ export default {
     }
   },
   created() {
+    this.url = process.env.VUE_APP_SERVER_URL
     this.fetchList()
   },
   methods: {
     fetchList() {
       searchByKeyword(this.query).then(value => {
         const { data } = value
+        console.log(data)
         this.list = data.records
         this.query.total = data.total
         this.query.pageSize = data.size

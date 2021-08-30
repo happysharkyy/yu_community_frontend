@@ -18,7 +18,6 @@ const mutations = {
 const actions = {
   // 用户登录
   login({ commit }, userInfo) {
-    console.log(userInfo);
     const { name, pass, rememberMe } = userInfo;
     return new Promise((resolve, reject) => {
       login({ username: name.trim(), password: pass, rememberMe: rememberMe })
@@ -41,7 +40,7 @@ const actions = {
           const { data } = response;
           if (!data) {
             commit("SET_TOKEN_STATE", "");
-            commit("SET_USER_STATE", "");
+            commit("SET_USER_STATE",data);
             removeToken();
             resolve();
             reject("Verification failed, please Login again.");

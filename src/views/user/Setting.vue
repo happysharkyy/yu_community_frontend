@@ -25,9 +25,16 @@
               </el-form>
             </el-tab-pane>
             <el-tab-pane label="头像" name="second">
-              <figure class="image is-48x48">
-                <img :src="`https://cn.gravatar.com/avatar/${this.user.id}?s=164&d=monsterid`">
-              </figure>
+              <el-upload
+                class="avatar-uploader"
+                action="#"
+                :show-file-list="false"
+                accept="image/png,image/gif,image/jpg,image/jpeg"
+                :before-upload="handleBeforeUpload">
+                <img v-if="this.user.avatar" :src="url+this.user.avatar" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+
             </el-tab-pane>
             <el-tab-pane label="电子邮箱" name="third">
               <el-form ref="dynamicValidateForm" :model="user" label-width="100px" class="demo-dynamic">
@@ -68,7 +75,7 @@
 </template>
 
 <script>
-import {getInfo, update} from '@/api/user'
+import {getInfo, update,avatarUpdate} from '@/api/user'
 
 export default {
   name: 'Setting',
@@ -76,6 +83,8 @@ export default {
     return {
       activeName: 'first',
       labelPosition: 'right',
+      url:'',
+
       user: {
         id: '',
         username: '',
@@ -88,9 +97,36 @@ export default {
     }
   },
   created() {
+    this.url = process.env.VUE_APP_SERVER_URL
     this.fetchInfo()
   },
   methods: {
+      handleBeforeUpload (file) {
+      if (!(file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpg' || file.type === 'image/jpeg')) {
+        this.$notify.warning({
+          title: '警告',
+          message: '请上传格式为image/png, image/gif, image/jpg, image/jpeg的图片'
+        })
+      }
+      let size = file.size / 1024 / 1024 / 2
+      if (size > 2) {
+        this.$notify.warning({
+          title: '警告',
+          message: '图片大小必须小于2M'
+        })
+      }
+      let fd = new FormData();//通过form数据格式来传
+      fd.append("picFile", file); //传文件
+      avatarUpdate(this.user.username,fd).then(res => {
+          console.log(res)
+          this.user.avatar = res.data
+              this.$notify.success({
+              title: 'Info',
+              message: '头像修改成功!',
+              duration: 3000
+          });
+      })
+    },
     fetchInfo() {
       getInfo(this.$route.params.username).then(res => {
         console.log(res)
@@ -116,5 +152,27 @@ export default {
 </script>
 
 <style scoped>
-
+ .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 100px;
+    height: 100px;
+    display: block;
+  }
 </style>

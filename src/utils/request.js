@@ -7,10 +7,9 @@ import { getToken } from '@/utils/auth'
 const service = axios.create({
   // 公共接口--这里注意后面会讲,url = base url + request url
   baseURL: process.env.VUE_APP_SERVER_URL,
-
   // baseURL: 'https://api.example.com',
-  // 超时时间 单位是ms，这里设置了5s的超时时间
-  timeout: 5 * 1000
+  // 超时时间 单位是ms，这里设置了10s的超时时间
+  timeout: 15 * 1000
 })
 
 // 2.请求拦截器request interceptor

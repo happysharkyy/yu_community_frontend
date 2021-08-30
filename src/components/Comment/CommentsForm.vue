@@ -3,22 +3,17 @@
     <div class="media-content">
       <el-row >
       <el-col align="center" :xs="8" :sm="8" :md="8" :lg="8" :xl="8">
-        <span class="val"  @click="ShowSubForward">转发✔{{forwardNum}}</span>
+        <span class="val"  @click="ShowSubForward">转发✔</span>
       </el-col>
+      
       <el-col align="center" :xs="8" :sm="8" :md="8" :lg="8" :xl="8">
         <span class="val" @click="ShowSubComment">评论💬</span>
       </el-col>
       <el-col align="center"  :xs="8" :sm="8" :md="8" :lg="8" :xl="8">
-        <el-tooltip class="item" effect="dark" content="收藏" placement="right"><span class="val" id="yesStar"  @click="change()">点赞🤍{{starNum}}</span></el-tooltip>
-        <el-tooltip class="item" effect="dark" content="取消收藏" placement="right"><span class="val" id="noStar" style="display:none"  @click="change()">点赞💛{{starNum}}</span></el-tooltip>
+        <span class="val" id="yesStar"  style="display:block"  @click="change()">点赞🤍{{starNum}}</span>
+        <span class="val" id="noStar" style="display:none"  @click="change()">点赞💛{{starNum}}</span>
       </el-col>
       </el-row>
-      
-    <!-- <div class="other">
-      
-      <span class="likes">点赞👍</span>
-      <span class="val">评论💬</span>
-    </div> -->
       <form @submit.prevent="onSubmitForward">
         <hr id="ForwardHr" style="display:none" />
         <b-field id="Forward" style="display:none">
@@ -49,7 +44,6 @@
       <form @submit.prevent="onSubmit">
         <hr id="commentHr" style="display:none" />
         <b-field id="comment" style="display:none">
-          
           <b-input
             v-model.lazy="commentText"
             type="textarea"
@@ -86,6 +80,7 @@ export default {
   data() {
     return {
       star:[],
+      
       forwardNum:0,
       starNum:0,
       commentText: '',
@@ -104,6 +99,7 @@ export default {
   },
   async mounted() {
     await this.fetchStars(this.slug)
+    
     await this.fetchForwards(this.slug)
   },
   methods: {
@@ -138,11 +134,9 @@ export default {
         const yesStar = document.querySelector('#yesStar')
         const noStar = document.querySelector('#noStar')
         let postData = {}
-        
         if( yesStar.style.display === 'block' ||  noStar.style.display === 'none'){
-          
           this.$message({
-            message: '收藏成功',
+            message: '点赞成功',
             type: 'success'
           });
           postData['objId'] = this.slug
@@ -156,7 +150,7 @@ export default {
 
         }else{
           this.$message({
-            message: '取消收藏',
+            message: '取消点赞',
             type: 'warning'
           });
           postData['objId'] = this.slug
@@ -174,18 +168,14 @@ export default {
         const commentHr = document.querySelector('#commentHr')
         const Subcomment = document.querySelector('#Subcomment')
         if( comment.style.display == 'block'){
-
-
           comment.style.display = 'none'
           commentHr.style.display = 'none'
           Subcomment.style.display = 'none'
         }else{
-
           comment.style.display = 'block'
           commentHr.style.display = 'block'
           Subcomment.style.display = 'block'
         }     
-
     },
     async ShowSubForward(){
         const Forward = document.querySelector('#Forward')
@@ -213,7 +203,7 @@ export default {
         postData['topic_id'] = this.slug
         await pushComment(postData)
         this.$emit('loadComments', this.slug)
-        this.$message.success('留言成功')
+        this.$message.success('评论成功')
         this.commentText=''
       } catch (e) {
         this.$buefy.toast.open({
@@ -233,7 +223,7 @@ export default {
         postData['userId'] = this.user.id
         postData['forwardStatus'] = 0
         postData['type'] = 'blog'
-        postData['content'] = this.ForwardText
+        postData['content'] = this.ForwardText 
         await saveForward(postData)
         this.$message.success('转发成功')
         this.forwardNum++
@@ -249,3 +239,10 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.item {
+  margin-top: 10px;
+  margin-right: 40px;
+}
+</style>

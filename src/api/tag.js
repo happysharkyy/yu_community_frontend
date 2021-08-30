@@ -10,3 +10,10 @@ export function getTopicsByTag(paramMap) {
     }
   })
 }
+export const save = (data,topicId) => {
+  return request({
+      url: '/tag/save/'+topicId,
+      method: 'post',
+      data: data
+  })
+}

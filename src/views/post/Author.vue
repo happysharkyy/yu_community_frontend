@@ -6,51 +6,64 @@
       </div>
       <div class="has-text-centered">
         <p class="is-size-5 mb-5">
-          <router-link :to="{ path: `/member/${user.username}/home` }">
-            {{ user.alias }} <span class="is-size-7 has-text-grey">{{ '@' + user.username }}</span>
+          <router-link :to="{ path: `/member/${topicUser.username}/home` }">
+            {{ topicUser.alias }} <span class="is-size-7 has-text-grey">{{ '@' + topicUser.username }}</span>
           </router-link>
         </p>
         <div class="columns is-mobile">
           <div class="column is-half">
-            <code>{{ user.topicCount }}</code>
+            <code>{{ topicUser.topicCount }}</code>
             <p>文章</p>
           </div>
           <div class="column is-half">
-            <code>{{ user.followerCount }}</code>
+            <code>{{ topicUser.followerCount }}</code>
             <p>粉丝</p>
           </div>
         </div>
-        <div>
-          <button
+        <div class="has-text-centered">
+          <b-button type="is-primary" style="width:80px" outlined  @click="MessageList()">私信</b-button>
+          <b-button 
             v-if="hasFollow"
-            class="button is-success button-center is-fullwidth"
-            @click="handleUnFollow(user.id)"
+            style="width:80px;margin-left:10px"
+           type="is-info is-light"
+            @click="handleUnFollow(topicUser.id)"
           >
             已关注
-          </button>
+          </b-button>
 
-          <button v-else class="button is-link button-center is-fullwidth" @click="handleFollow(user.id)">
+          <b-button  v-else style="width:80px;margin-left:10px"   type="is-info is-light" @click="handleFollow(topicUser.id)"  outlined class="ml-2">
             关注
-          </button>
+          </b-button>
         </div>
+
+
       </div>
     </el-card>
+  <el-dialog title="私信" :visible.sync="dialogFormVisible">
+    <ChartAlert 
+    :user="user"
+    :topicUser="topicUser"></ChartAlert>
+  </el-dialog>
   </section>
+
 </template>
 
 <script>
+import ChartAlert from '@/components/ChartAlert/index'
 import { follow, hasFollow, unFollow } from '@/api/follow'
 import { mapGetters } from 'vuex'
 export default {
+  components: { ChartAlert },
   name: 'Author',
   props: {
-    user: {
+    topicUser: {
       type: Object,
       default: null
     }
   },
   data() {
     return {
+      dialogFormVisible: false,
       hasFollow: false
     }
   },
@@ -59,14 +72,19 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'token'
+      'token','user'
     ])
   },
   methods: {
+    MessageList(){
+       this.dialogFormVisible = true
+       console.log(this.user)
+
+    },
     fetchInfo() {
       if(this.token != null && this.token !== '')
       {
-        hasFollow(this.user.id).then(value => {
+        hasFollow(this.topicUser.id).then(value => {
           const { data } = value
           this.hasFollow = data.hasFollow
         })
@@ -79,7 +97,7 @@ export default {
           const { message } = response
           this.$message.success(message)
           this.hasFollow = !this.hasFollow
-          this.user.followerCount = parseInt(this.user.followerCount) + 1
+          this.topicUser.followerCount = parseInt(this.topicUser.followerCount) + 1
         })
       }
       else{
@@ -91,7 +109,7 @@ export default {
         const { message } = response
         this.$message.success(message)
         this.hasFollow = !this.hasFollow
-        this.user.followerCount = parseInt(this.user.followerCount) - 1
+        this.topicUser.followerCount = parseInt(this.topicUser.followerCount) - 1
       })
     }
   }

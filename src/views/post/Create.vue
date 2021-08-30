@@ -36,8 +36,16 @@
               ellipsis
               placeholder="请输入主题标签，限制为 15 个字符和 3 个标签"
             />
+             <el-select v-model="series" placeholder="请选择合辑">
+              <el-option
+                v-for="item in options"
+                :key="item.id"
+                :label="item.title"
+                :value="item.id">
+              </el-option>
+            </el-select>
 
-            <el-form-item>
+            <el-form-item style="margin-top:10px">
               <el-button
                 type="primary"
                 @click="submitForm('ruleForm')"
@@ -45,6 +53,8 @@
               </el-button>
               <el-button @click="resetForm('ruleForm')">重置</el-button>
             </el-form-item>
+
+            
           </el-form>
         </div>
       </el-card>
@@ -54,6 +64,7 @@
 
 <script>
 import { post } from '@/api/post'
+import { findSeries,saveSeriesPost } from '@/api/series'
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 
@@ -62,7 +73,10 @@ export default {
 
   data() {
     return {
+      url:'',
       contentEditor: {},
+      series:'',
+      options:[],
       ruleForm: {
         title: '', // 标题
         tags: [], // 标签
@@ -82,7 +96,10 @@ export default {
     }
   },
   mounted() {
-    this.contentEditor = new Vditor('vditor', {
+    this.url = process.env.VUE_APP_SERVER_URL
+    let _this = this
+    _this.findSeriesList()
+    _this.contentEditor = new Vditor('vditor', {
       height: 500,
       placeholder: '此处为话题内容……',
       theme: 'classic',
@@ -98,6 +115,7 @@ export default {
         }
       },
       tab: '\t',
+      editorName:'contentEditor',
       typewriterMode: true,
       toolbarConfig: {
         pin: true
@@ -105,10 +123,34 @@ export default {
       cache: {
         enable: false
       },
+      upload:{
+          accept:'image/*',
+          url:this.url+'/upload/fileupload',
+          filename(name) {
+            return name.replace(/[^(a-zA-Z0-9\u4e00-\u9fa5\.)]/g)
+          },
+          linkToImgCallback() {
+            console.log("api处理")
+          },
+          success(editor, msg) {
+            console.log(msg);
+            _this.contentEditor.insertValue('[![]('+process.env.VUE_APP_SERVER_URL+msg+')]('+process.env.VUE_APP_SERVER_URL+msg+')');
+            return true
+          },
+          error(msg) {
+            console.log(msg+"上传失败了")
+          }
+       },
       mode: 'sv'
     })
   },
   methods: {
+    findSeriesList(){
+      findSeries().then(res=>{
+        this.options = res.data
+      })
+
+    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -127,6 +169,7 @@ export default {
           this.ruleForm.content = this.contentEditor.getValue()
           post(this.ruleForm).then((response) => {
             const { data } = response
+            saveSeriesPost(data.id,this.series);
             setTimeout(() => {
               this.$router.push({
                 name: 'post-detail',

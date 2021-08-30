@@ -8,6 +8,12 @@ export function getList(pageNo, size, tab) {
     params: { pageNo: pageNo, size: size, tab: tab }
   }))
 }
+export function getListFollow() {
+  return request({
+    url: '/post/list/follow',
+    method: 'get'
+  })
+}
 
 // 发布
 export function post(topic) {
@@ -51,6 +57,12 @@ export function deleteTopic(id) {
   return request({
     url: `/post/delete/${id}`,
     method: 'delete'
+  })
+}
+export function getListTop() {
+  return request({
+    url: '/post/list/top',
+    method: 'get'
   })
 }
 

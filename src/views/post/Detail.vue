@@ -68,7 +68,8 @@
       <!--作者-->
       <Author
         v-if="flag"
-        :user="topicUser"
+        :topicUser="topicUser"
+   
       />
       <!--推荐-->
       <recommend
