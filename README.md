@@ -8,5 +8,4 @@
  Spring Boot、Mysql、Mybatis、MyBatis-Plus、Spring Security、elasticsearch、rabbitmq、redis等等
 
 
-### 项目参考极光社区部分代码
-
+本项目大量借鉴了[极光社区项目](https://github.com/haoyu21/aurora)，在此感谢原作者的无私开源。
